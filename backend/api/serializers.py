@@ -1,11 +1,26 @@
-from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
-from .models import User, Follow
+from recipes.models import Tag, Ingredient
+from users.models import User, Follow
+
+
+class TagSerializer(ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ('__all__')
+
+
+class IngredientSerializer(ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = '__all__'
 
 
 class DjoserUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
         model = User

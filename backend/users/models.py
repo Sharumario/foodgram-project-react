@@ -24,7 +24,7 @@ class User(AbstractUser):
         ),
         validators=[username_validator],
     )
-    first_name = models.CharField('Имя пользователя',max_length=150, )
+    first_name = models.CharField('Имя пользователя', max_length=150, )
     last_name = models.CharField(max_length=150, verbose_name='Фамилия', )
     password = models.CharField(max_length=150, verbose_name='Пароль', )
 
