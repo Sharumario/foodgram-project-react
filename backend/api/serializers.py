@@ -211,3 +211,25 @@ class FavoriteAndCartSerializer(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
+
+
+class FollowSerializer(DjoserUserSerializer):
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_recipes_count(self, author):
+        return author.recipes.count()
+
+    def get_recipes(self, author):
+        recipes = author.recipes.all()
+        recipes_limit = self.context.get('request').query_params.get(
+            'recipes_limit'
+        )
+        if recipes_limit:
+            recipes = recipes[:int(recipes_limit)]
+        return FavoriteAndCartSerializer(recipes, many=True).data

@@ -7,15 +7,17 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
 
 from api.pagination import CustomPagination
 from recipes.models import (
     Tag, Ingredient, Recipe, ShoppingCart, Favorite, RecipeIngredient
 )
-from users.models import User
+from users.models import User, Follow
 from .serializers import (
     TagSerializer, IngredientSerializer, FavoriteAndCartSerializer,
-    ReadRecipeSerializer, WriteRecipeSerializer
+    ReadRecipeSerializer, WriteRecipeSerializer, FollowSerializer,
+    DjoserUserSerializer,
 )
 from .permissions import IsAuthorAdminOrReadOnly
 
@@ -37,21 +39,60 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class DjoserUserViewSet(UserViewSet):
     pagination_class = CustomPagination
+    serializer_class = DjoserUserSerializer
 
     def get_queryset(self):
         return User.objects.all()
 
-    @action(["get"], detail=False)
+    @action(['get'], detail=False, permission_classes=[IsAuthenticated])
     def me(self, request, *args, **kwargs):
         self.get_object = self.get_instance
         return self.retrieve(request, *args, **kwargs)
-    
-        @action(
-        detail=True,
-        methods=['get', 'delete'],
-        permission_classes=(IsAuthenticated,),
-        pagination_class=None,
-    )
+
+    @action(detail=True, methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated])
+    def subscribe(self, request, id=None):
+        author = get_object_or_404(User, id=id)
+        user = request.user
+        if request.method == 'POST':
+            if user == author:
+                return Response(
+                    {'Нельзя подписаться на самого себя!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if Follow.objects.filter(
+                    user=user, author=author
+            ).exists():
+                return Response(
+                    {'Нельзя подписаться повторно!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            Follow.objects.create(user=user, author=author)
+            serializer = FollowSerializer(
+                author,
+                context={'request': request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        subscription = Follow.objects.filter(
+            user=request.user,
+            author=author
+        )
+        if subscription:
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {'Попытка удалить несуществующую подписку!'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class FollowListView(ListAPIView):
+    serializer_class = FollowSerializer
+    permission_classes = (IsAuthenticated, )
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        return User.objects.filter(following__user=self.request.user)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
