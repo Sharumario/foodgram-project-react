@@ -1,7 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-#from drf_extra_fields import Base64ImageField
+from drf_extra_fields import Base64ImageField
 
 from recipes.models import (
     Tag, Ingredient, ShoppingCart, Favorite, Recipe, RecipeIngredient
@@ -118,7 +118,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
-    #image = Base64ImageField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -128,13 +128,13 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
             'author',
             'ingredients',
             'name',
-    #        'image',
+            'image',
             'text',
             'cooking_time',
         )
     fields_required = [
         'ingredients', 'tags',
-    #    'image',
+        'image',
         'name', 'text', 'cooking_time'
     ]
 
@@ -201,7 +201,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class FavoriteAndCartSerializer(serializers.ModelSerializer):
-    #image = Base64ImageField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
