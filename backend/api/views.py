@@ -1,27 +1,26 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from djoser.views import UserViewSet
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListAPIView
 
 from api.pagination import CustomPagination
 from recipes.models import (
     Tag, Ingredient, Recipe, ShoppingCart, Favorite, RecipeIngredient
 )
 from users.models import User, Follow
+from .filters import IngredientFilter, RecipeFilter
+from .permissions import IsAuthorAdminOrReadOnly
 from .serializers import (
     TagSerializer, IngredientSerializer, FavoriteAndCartSerializer,
     ReadRecipeSerializer, WriteRecipeSerializer, FollowSerializer,
     DjoserUserSerializer,
 )
-from .permissions import IsAuthorAdminOrReadOnly
-
-from .filters import IngredientFilter
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -98,6 +97,8 @@ class FollowListView(ListAPIView):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorAdminOrReadOnly, )
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:
