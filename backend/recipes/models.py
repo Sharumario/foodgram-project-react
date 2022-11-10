@@ -46,7 +46,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
-        verbose_name='Ингридиенты',
+        verbose_name='Ингредиенты ',
         related_name='recipes',
     )
     tags = models.ManyToManyField(
@@ -100,11 +100,13 @@ class RecipeIngredient(models.Model):
 
     class Meta:
         ordering = ['-id']
-        verbose_name = 'Количество ингридиента'
-        verbose_name_plural = 'Количество ингридиентов'
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
         constraints = [
-            models.UniqueConstraint(fields=['ingredient', 'recipe'],
-                                    name='unique ingredients recipe')
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'],
+                name='unique ingredients recipe'
+            )
         ]
 
 
@@ -126,9 +128,12 @@ class Favorite(models.Model):
         ordering = ('-id',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
-        models.UniqueConstraint(
-            fields=['recipe', 'user'], name='favorite_unique'
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'user'], 
+                name='favorite_unique'
+            )
+        ]
 
     def __str__(self):
         return f'{self.user} favorite: {self.recipe.name}'
@@ -146,6 +151,12 @@ class ShoppingCart(models.Model):
         ordering = ('-id',)
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'user'], 
+                name='shopping_cart_unique'
+            )
+        ]
 
     def __str__(self):
         return f'In {self.user} shopping cart: {self.recipe}'

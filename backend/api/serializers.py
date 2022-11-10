@@ -155,7 +155,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = dict(data)
         tags = data['tags']
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data['ingredients']
         self.check_empty_and_repeat(ingredients, 'ингредиенты')
         self.check_empty_and_repeat(tags, 'теги')
         return data
@@ -191,7 +191,6 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.ingredients.clear()
         self.create_ingredients(recipe=instance,
                                 ingredients=ingredients)
-        instance.save()
         return instance
 
     def to_representation(self, instance):

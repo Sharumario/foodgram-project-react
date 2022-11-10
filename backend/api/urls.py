@@ -11,10 +11,10 @@ app_name = 'api'
 router_v1 = DefaultRouter()
 router_v1.register('users', DjoserUserViewSet, basename='users')
 router_v1.register('tags', TagViewSet, basename='tag')
-router_v1.register('ingredient', IngredientViewSet, basename='ingredient')
-router_v1.register('recipe', RecipeViewSet, basename='recipe')
+router_v1.register('ingredients', IngredientViewSet, basename='ingredients')
+router_v1.register('recipes', RecipeViewSet, basename='recipes')
 urlpatterns = [
-    path('users/subscriptions/', FollowListView.as_view()),
+    path('users/subscriptions/', FollowListView.as_view(), name='subscriptions'),
     path('', include(router_v1.urls)),
     path('auth/', include('djoser.urls.authtoken')),
 ]

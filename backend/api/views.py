@@ -72,11 +72,11 @@ class DjoserUserViewSet(UserViewSet):
                 context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        subscription = Follow.objects.filter(
-            user=request.user,
-            author=author
+        subscription = Follow.objects.filter( 
+            user=request.user, 
+            author=author 
         )
-        if subscription:
+        if subscription.exists():
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
@@ -143,7 +143,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=user,
             recipe=recipe
         )
-        if not in_cart_or_favorite:
+        if not in_cart_or_favorite.exists():
             shopping_cart = model.objects.create(
                 user=user,
                 recipe=recipe
@@ -160,16 +160,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def delete_in_cart(model, user, recipe, pk, message):
-        in_shopping_cart = model.objects.filter(
+        in_cart_or_favorite = model.objects.filter(
             user=user,
             recipe=recipe
         )
-        if not in_shopping_cart:
+        if not in_cart_or_favorite.exists():
             return Response(
                 {'errors': f'Такого рецепта нет в {message}.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        in_shopping_cart.delete()
+        in_cart_or_favorite.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
@@ -189,12 +189,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+        ).annotate(total_amount=Sum('amount'))
         shopping_list = ('Список покупок \n\n')
         shopping_list += '\n'.join([
             f'- {ingredient["ingredient__name"]} '
             f'({ingredient["ingredient__measurement_unit"]})'
-            f' - {ingredient["amount"]}'
+            f' - {ingredient["total_amount"]}'
             for ingredient in ingredients
         ])
         response = HttpResponse(shopping_list, content_type='text/plain')
