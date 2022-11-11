@@ -5,4 +5,4 @@ PyJWT==2.1.0
 Pillow==9.2.0
 djoser==2.1.0
 django-filter==22.1
-drf-extra-fields==3.4.0
+drf-extra-fields==3.2.1

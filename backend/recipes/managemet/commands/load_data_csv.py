@@ -1,7 +1,9 @@
 import csv
 import os
+
 from django.conf import settings
 from django.core.management import BaseCommand
+
 from recipes.models import Ingredient
 
 
@@ -15,4 +17,3 @@ class Command(BaseCommand):
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 Ingredient.objects.create(name=row[0], measurement_unit=row[1])
-        print('Ингредиенты импортированы.')
