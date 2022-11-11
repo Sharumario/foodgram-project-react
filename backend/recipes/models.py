@@ -1,6 +1,8 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
+
 
 COOKING_TIME_MIN_VALUE = 1
 INGREDIENTS_MIN_VALUE = 1
@@ -130,7 +132,7 @@ class Favorite(models.Model):
         verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'user'], 
+                fields=['recipe', 'user'],
                 name='favorite_unique'
             )
         ]
@@ -153,7 +155,7 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Покупки'
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'user'], 
+                fields=['recipe', 'user'],
                 name='shopping_cart_unique'
             )
         ]

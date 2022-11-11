@@ -6,20 +6,20 @@ from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from api.pagination import CustomPagination
 from recipes.models import (
-    Tag, Ingredient, Recipe, ShoppingCart, Favorite, RecipeIngredient
+    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
 )
 from users.models import User, Follow
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorAdminOrReadOnly
 from .serializers import (
-    TagSerializer, IngredientSerializer, FavoriteAndCartSerializer,
-    ReadRecipeSerializer, WriteRecipeSerializer, FollowSerializer,
-    DjoserUserSerializer,
+    DjoserUserSerializer, FavoriteAndCartSerializer, FollowSerializer,
+    IngredientSerializer, ReadRecipeSerializer, TagSerializer,
+    WriteRecipeSerializer,
 )
 
 
@@ -72,9 +72,9 @@ class DjoserUserViewSet(UserViewSet):
                 context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        subscription = Follow.objects.filter( 
-            user=request.user, 
-            author=author 
+        subscription = Follow.objects.filter(
+            user=request.user,
+            author=author
         )
         if subscription.exists():
             subscription.delete()
