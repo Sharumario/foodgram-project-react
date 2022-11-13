@@ -1,7 +1,6 @@
-![workflow](https://github.com/Sharumario/foodgram-project-react/actions/workflows/
-foodgram_workflows.yml/badge.svg)
+![workflow](https://github.com/Sharumario/foodgram-project-react/actions/workflows/foodgram_workflows.yml/badge.svg)
 
-## Проект доступен по [адресу]
+## Проект доступен по [адресу] 51.250.78.112/
 
 Описание проекта:
 
