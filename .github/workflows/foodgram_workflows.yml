@@ -69,7 +69,9 @@ jobs:
             sudo docker-compose stop
             sudo docker-compose down -v
             sudo docker rmi sharumario/foodgram-backend
+            sudo docker rmi sharumario/foodgram-frontend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend
             touch .env 
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
