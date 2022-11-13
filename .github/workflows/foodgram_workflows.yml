@@ -1,4 +1,4 @@
-name: foodgram servise
+name: foodgram workflows
 
 on: [push]
 
